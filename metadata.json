@@ -1,0 +1,5 @@
+{
+  "name": "Gemini Multi-Agent Studio",
+  "description": "A client-side multi-agent orchestration system where a Director AI guides two Actor AIs (Debaters or Performers) to generate dynamic scripts and debates based on user topics using Google Gemini.",
+  "requestFramePermissions": []
+}
