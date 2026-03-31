@@ -21,6 +21,16 @@ export const useMultiAgentSimulation = () => {
         [AgentRole.DIRECTOR]: AGENT_CONFIG[AgentRole.DIRECTOR].voiceName,
         [AgentRole.ACTOR_A]: AGENT_CONFIG[AgentRole.ACTOR_A].voiceName,
         [AgentRole.ACTOR_B]: AGENT_CONFIG[AgentRole.ACTOR_B].voiceName,
+    },
+    customAvatars: {
+        [AgentRole.DIRECTOR]: null,
+        [AgentRole.ACTOR_A]: null,
+        [AgentRole.ACTOR_B]: null,
+    },
+    avatarSizes: {
+        [AgentRole.DIRECTOR]: 64,
+        [AgentRole.ACTOR_A]: 64,
+        [AgentRole.ACTOR_B]: 64,
     }
   });
 
@@ -183,7 +193,9 @@ export const useMultiAgentSimulation = () => {
       maxResponseLength,
       isIntervening: false,
       isMuted: prev.isMuted, 
-      agentVoices: prev.agentVoices 
+      agentVoices: prev.agentVoices,
+      customAvatars: prev.customAvatars,
+      avatarSizes: prev.avatarSizes
     }));
     
     setTimeout(() => {
@@ -257,7 +269,9 @@ export const useMultiAgentSimulation = () => {
       maxResponseLength: prev.maxResponseLength,
       isIntervening: false,
       isMuted: prev.isMuted,
-      agentVoices: prev.agentVoices, 
+      agentVoices: prev.agentVoices,
+      customAvatars: prev.customAvatars,
+      avatarSizes: prev.avatarSizes,
     }));
   };
 
@@ -271,6 +285,26 @@ export const useMultiAgentSimulation = () => {
     }));
   };
 
+  const setCustomAvatar = (role: AgentRole, avatar: string | null) => {
+    setState(prev => ({
+        ...prev,
+        customAvatars: {
+            ...prev.customAvatars,
+            [role]: avatar
+        }
+    }));
+  };
+
+  const setAvatarSize = (role: AgentRole, size: number) => {
+    setState(prev => ({
+        ...prev,
+        avatarSizes: {
+            ...prev.avatarSizes,
+            [role]: size
+        }
+    }));
+  };
+
   return {
     state,
     startSimulation,
@@ -280,6 +314,8 @@ export const useMultiAgentSimulation = () => {
     triggerIntervention,
     toggleMute,
     setAgentVoice,
+    setCustomAvatar,
+    setAvatarSize,
     loadState,
   };
 };

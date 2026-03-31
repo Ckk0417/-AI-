@@ -7,9 +7,11 @@ interface ChatBubbleProps {
   message: Message;
   language: Language;
   mode?: SimulationMode; 
+  customAvatar?: string | null;
+  avatarSize?: number;
 }
 
-export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, language, mode = SimulationMode.DEBATE }) => {
+export const ChatBubble: React.FC<ChatBubbleProps> = React.memo(({ message, language, mode = SimulationMode.DEBATE, customAvatar, avatarSize = 64 }) => {
   const config = AGENT_CONFIG[message.role];
   const isDirector = message.role === AgentRole.DIRECTOR;
   
@@ -27,18 +29,46 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, language, mode 
 
   return (
     <div
-      className={`flex w-full mb-8 animate-fade-in ${
-        isDirector ? "justify-center" : message.role === AgentRole.ACTOR_A ? "justify-start" : "justify-end"
+      className={`flex w-full mb-6 md:mb-10 animate-fade-in gap-2 md:gap-4 ${
+        isDirector ? "flex-col items-center text-center" : 
+        message.role === AgentRole.ACTOR_B ? "flex-row-reverse" : "flex-row"
       }`}
     >
+      {/* Avatar Section */}
+      <div className="shrink-0 mt-1">
+        <div 
+          className="rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-200"
+          style={{ 
+            width: window.innerWidth < 768 ? Math.min(avatarSize, 48) : avatarSize, 
+            height: window.innerWidth < 768 ? Math.min(avatarSize, 48) : avatarSize 
+          }}
+        >
+          {customAvatar ? (
+            <img 
+              src={customAvatar} 
+              alt="Avatar" 
+              className="w-full h-full object-cover block" 
+              referrerPolicy="no-referrer"
+              key={customAvatar}
+            />
+          ) : (
+            <span style={{ fontSize: (window.innerWidth < 768 ? Math.min(avatarSize, 48) : avatarSize) * 0.5 }} className="filter drop-shadow-sm">{config.avatar}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Content Section */}
       <div
-        className={`flex max-w-[85%] md:max-w-[75%] flex-col ${
-          message.role === AgentRole.ACTOR_B ? "items-end" : "items-start"
+        className={`flex flex-col ${
+          isDirector ? "max-w-[95%] md:max-w-[90%] items-center" : 
+          message.role === AgentRole.ACTOR_B ? "max-w-[85%] md:max-w-[70%] items-end" : 
+          "max-w-[85%] md:max-w-[70%] items-start"
         }`}
       >
-        <div className="flex items-center gap-3 mb-2 px-1">
-          <span className="text-3xl filter drop-shadow-sm">{config.avatar}</span>
-          <span className={`text-sm md:text-base font-bold uppercase tracking-wider ${
+        <div className={`flex items-center gap-1.5 md:gap-2 mb-1 px-1 ${
+          message.role === AgentRole.ACTOR_B ? "flex-row-reverse" : "flex-row"
+        }`}>
+          <span className={`text-xs md:text-base font-bold uppercase tracking-wider ${
              isDirector ? "text-violet-700" : message.role === AgentRole.ACTOR_A ? "text-cyan-700" : "text-rose-700"
           }`}>
             {displayName}
@@ -47,7 +77,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, language, mode 
             <button
               onClick={handleReplay}
               disabled={isPlaying}
-              className={`ml-1 p-1.5 rounded-full hover:bg-slate-200 transition-colors ${
+              className={`p-1.5 rounded-full hover:bg-slate-200 transition-colors ${
                  isPlaying ? "text-green-600 animate-pulse" : "text-slate-400 hover:text-slate-700"
               }`}
               title="Replay Audio"
@@ -62,19 +92,19 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, language, mode 
         </div>
         
         <div
-          className={`relative p-6 rounded-3xl shadow-sm border ${
+          className={`relative p-4 md:p-8 lg:p-10 rounded-2xl md:rounded-[2rem] shadow-sm border ${
             isDirector
-              ? "bg-violet-50 border-violet-200 text-center text-violet-900"
+              ? "bg-violet-50 border-violet-200 text-violet-900"
               : message.role === AgentRole.ACTOR_A
               ? "bg-cyan-50 border-cyan-200 text-cyan-950 rounded-tl-none"
               : "bg-rose-50 border-rose-200 text-rose-950 rounded-tr-none"
           }`}
         >
-          <p className="whitespace-pre-wrap leading-relaxed text-lg md:text-xl font-medium">
+          <p className="whitespace-pre-wrap leading-relaxed text-base md:text-xl lg:text-2xl font-medium">
             {message.content}
           </p>
         </div>
       </div>
     </div>
   );
-};
+});

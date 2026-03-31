@@ -16,6 +16,8 @@ const App: React.FC = () => {
     triggerIntervention, 
     toggleMute,
     setAgentVoice,
+    setCustomAvatar,
+    setAvatarSize,
     loadState
   } = useMultiAgentSimulation();
   
@@ -126,18 +128,24 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-slate-50 text-slate-900 font-sans selection:bg-violet-200 selection:text-violet-900">
+    <div 
+      className="min-h-screen flex flex-col items-center bg-slate-50 text-slate-900 font-sans selection:bg-violet-200 selection:text-violet-900"
+      style={{ paddingLeft: '0px' }}
+    >
       {/* Header */}
-      <header className="w-full max-w-5xl p-6 border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-10 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-2xl shadow-lg shadow-violet-500/20 text-white">
+      <header 
+        className="w-full max-w-6xl p-3 md:p-5 border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-10 flex flex-col lg:flex-row justify-between items-center gap-3 shadow-sm"
+        style={{ marginLeft: '0px', paddingLeft: '20px', width: '1500px', height: '120px', fontFamily: 'Times New Roman' }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-xl md:text-2xl shadow-lg shadow-violet-500/20 text-white">
             🤖
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">
+            <h1 className="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">
               {t.appTitle}
             </h1>
-            <p className="text-sm text-slate-500 font-medium">{t.poweredBy}</p>
+            <p className="text-xs text-slate-500 font-medium">{t.poweredBy}</p>
           </div>
         </div>
         
@@ -190,16 +198,28 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Stage */}
-      <main className="flex-1 w-full max-w-5xl p-4 md:p-8 flex flex-col gap-8">
+      <main 
+        className="flex-1 w-full max-w-6xl p-3 md:p-6 lg:p-10 flex flex-col gap-6 md:gap-8"
+        style={{ fontFamily: 'Times New Roman' }}
+      >
         
         {/* Controls (Only visible when not playing or empty) */}
         {!state.isPlaying && state.messages.length === 0 && (
-          <div className="w-full bg-white p-6 md:p-10 rounded-3xl border border-slate-200 shadow-xl animate-fade-in space-y-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-800">{t.setStage}</h2>
+          <div 
+            className="w-full bg-white p-5 md:p-8 lg:p-12 rounded-3xl md:rounded-[2.5rem] border border-slate-200 shadow-xl md:shadow-2xl animate-fade-in space-y-8 md:space-y-12"
+            style={{ marginLeft: '-220px', paddingLeft: '48px', marginRight: '0px', marginBottom: '0px', marginTop: '-40px', width: '1500px', fontFamily: 'Times New Roman' }}
+          >
+            <h2 
+              className="text-2xl md:text-4xl font-black text-center text-slate-800 tracking-tight"
+              style={{ fontSize: '36px', fontStyle: 'normal', fontWeight: 'bold', fontFamily: 'Times New Roman', marginBottom: '-50px', width: '1062.4px', height: '40px', marginLeft: '170px', paddingRight: '0px', paddingBottom: '0px', marginRight: '0px', marginTop: '-40px' }}
+            >{t.setStage}</h2>
             
             {/* Mode Selection */}
             <div>
-              <label className="block text-lg font-bold text-slate-700 mb-4">{t.selectFormat}</label>
+              <label 
+                className="block text-lg font-bold text-slate-700 mb-4"
+                style={{ borderWidth: '0px', paddingLeft: '0px', height: '28px', marginBottom: '0px', fontFamily: 'Times New Roman' }}
+              >{t.selectFormat}</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <button
                   onClick={() => setSelectedMode(SimulationMode.DEBATE)}
@@ -208,6 +228,7 @@ const App: React.FC = () => {
                       ? "border-violet-500 bg-violet-50 text-violet-900 shadow-md"
                       : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-400 hover:bg-white"
                   }`}
+                  style={{ height: '150.2px', fontFamily: 'Times New Roman' }}
                 >
                   <span className="text-4xl">⚖️</span>
                   <span className="text-xl font-bold">{t.debate}</span>
@@ -220,6 +241,7 @@ const App: React.FC = () => {
                       ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-900 shadow-md"
                       : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-400 hover:bg-white"
                   }`}
+                  style={{ height: '150.2px', paddingLeft: '24px', fontFamily: 'Times New Roman' }}
                 >
                   <span className="text-4xl">🎭</span>
                   <span className="text-xl font-bold">{t.theater}</span>
@@ -232,6 +254,7 @@ const App: React.FC = () => {
                       ? "border-emerald-500 bg-emerald-50 text-emerald-900 shadow-md"
                       : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-400 hover:bg-white"
                   }`}
+                  style={{ height: '150.2px', fontFamily: 'Times New Roman' }}
                 >
                   <span className="text-4xl">🎓</span>
                   <span className="text-xl font-bold">{t.education}</span>
@@ -242,29 +265,108 @@ const App: React.FC = () => {
 
             {/* Voice Cast Settings */}
             <div>
-               <label className="block text-lg font-bold text-slate-700 mb-4">{t.voiceCast}</label>
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <label 
+                 className="block text-lg md:text-xl font-bold text-slate-700 mb-4 md:mb-6"
+                 style={{ marginBottom: '5px', marginTop: '-42px', fontFamily: 'Times New Roman' }}
+               >{t.voiceCast}</label>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                   {[AgentRole.DIRECTOR, AgentRole.ACTOR_A, AgentRole.ACTOR_B].map(role => {
                     const currentVoice = state.agentVoices[role];
+                    const customAvatar = state.customAvatars[role];
                     const config = AGENT_CONFIG[role];
                     const roleColor = role === AgentRole.DIRECTOR ? 'text-violet-600' : role === AgentRole.ACTOR_A ? 'text-cyan-600' : 'text-rose-600';
+                    
+                    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Validate file type
+                        if (!file.type.startsWith('image/')) {
+                          alert(language === 'zh-TW' ? "請上傳圖片檔案" : "Please upload an image file");
+                          return;
+                        }
+                        // Limit to 2MB to avoid localStorage issues
+                        if (file.size > 2 * 1024 * 1024) {
+                          alert(language === 'zh-TW' ? "檔案太大（上限 2MB）" : "File too large (Max 2MB)");
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setCustomAvatar(role, reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    };
+
                     return (
-                      <div key={role} className="flex flex-col gap-2">
-                        <div className={`flex items-center gap-2 text-sm font-bold uppercase tracking-wider ${roleColor}`}>
-                           <span className="text-xl">{config.avatar}</span>
-                           <span>{config.names(selectedMode, language)}</span>
+                      <div key={role} className="flex flex-col gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100" style={{ fontFamily: 'Times New Roman' }}>
+                        <div className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider ${roleColor}`}>
+                           <div 
+                             className="rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-200 shrink-0"
+                             style={{ width: state.avatarSizes[role], height: state.avatarSizes[role] }}
+                           >
+                             {customAvatar ? (
+                               <img 
+                                 src={customAvatar} 
+                                 alt="Avatar" 
+                                 className="w-full h-full object-cover block" 
+                                 referrerPolicy="no-referrer" 
+                                 key={customAvatar}
+                               />
+                             ) : (
+                               <span style={{ fontSize: state.avatarSizes[role] * 0.5 }}>{config.avatar}</span>
+                             )}
+                           </div>
+                           <div className="flex flex-col">
+                             <span className="text-xs opacity-60">{t.voiceCast}</span>
+                             <span className="text-base">{config.names(selectedMode, language)}</span>
+                           </div>
                         </div>
-                        <select
-                          value={currentVoice}
-                          onChange={(e) => setAgentVoice(role, e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-sm"
-                        >
-                          {AVAILABLE_VOICES.map((v) => (
-                            <option key={v.id} value={v.id}>
-                              {v.label}
-                            </option>
-                          ))}
-                        </select>
+                        
+                        <div className="space-y-3">
+                          {/* Size Slider */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-xs font-semibold text-slate-500">
+                              <span>{t.avatarSizeLabel}</span>
+                              <span>{state.avatarSizes[role]}px</span>
+                            </div>
+                            <input 
+                              type="range"
+                              min="40"
+                              max="200"
+                              step="5"
+                              value={state.avatarSizes[role]}
+                              onChange={(e) => setAvatarSize(role, Number(e.target.value))}
+                              className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
+                            />
+                          </div>
+
+                          <select
+                            value={currentVoice}
+                            onChange={(e) => setAgentVoice(role, e.target.value)}
+                            className="w-full bg-white border border-slate-200 rounded-xl p-2 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-sm"
+                          >
+                            {AVAILABLE_VOICES.map((v) => (
+                              <option key={v.id} value={v.id}>
+                                {v.label}
+                              </option>
+                            ))}
+                          </select>
+
+                          <div className="flex gap-2">
+                            <label className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors flex items-center justify-center gap-1 shadow-sm">
+                              <span>🖼️</span> {t.uploadAvatar}
+                              <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                            </label>
+                            {customAvatar && (
+                              <button 
+                                onClick={() => setCustomAvatar(role, null)}
+                                className="px-3 py-2 bg-rose-50 border border-rose-100 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-100 transition-colors shadow-sm"
+                              >
+                                {t.removeAvatar}
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     );
                   })}
@@ -272,13 +374,16 @@ const App: React.FC = () => {
             </div>
 
             {/* Inputs: Topic, Rounds, Length */}
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
               <div className="flex-grow">
-                <label className="block text-lg font-bold text-slate-700 mb-3 flex items-center justify-between">
+                <label 
+                  className="block text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-4 flex items-center justify-between"
+                  style={{ width: '1042.4px', height: '34px', marginBottom: '5px', marginLeft: '0px', paddingLeft: '0px', marginRight: '0px', paddingRight: '0px', marginTop: '-50px' }}
+                >
                     {t.topicLabel}
                     <button 
                       onClick={handleRandomTopic}
-                      className="text-violet-600 hover:text-violet-800 text-sm font-bold flex items-center gap-1 transition-colors bg-violet-50 px-3 py-1 rounded-lg hover:bg-violet-100"
+                      className="text-violet-600 hover:text-violet-800 text-xs md:text-sm font-bold flex items-center gap-2 transition-colors bg-violet-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl hover:bg-violet-100"
                     >
                        <span>🎲</span> {t.randomTopic}
                     </button>
@@ -296,10 +401,11 @@ const App: React.FC = () => {
                         ? t.topicPlaceholderTheater
                         : t.topicPlaceholderEducation
                     }
-                    className="w-full bg-white border border-slate-300 rounded-xl p-5 pr-16 text-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all placeholder-slate-400 shadow-inner"
+                    className="w-full bg-white border border-slate-200 rounded-2xl p-5 md:p-7 pr-20 text-xl md:text-2xl text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all placeholder-slate-300 shadow-sm font-medium"
                     onKeyDown={(e) => e.key === 'Enter' && handleStart()}
+                    style={{ marginTop: '0px' }}
                   />
-                  <div className={`absolute right-4 top-1/2 -translate-y-1/2 text-sm font-mono font-bold ${
+                  <div className={`absolute right-6 top-1/2 -translate-y-1/2 text-sm md:text-base font-mono font-bold ${
                       inputTopic.length >= MAX_TOPIC_LENGTH ? 'text-red-500' : 'text-slate-400'
                   }`}>
                     {inputTopic.length}/{MAX_TOPIC_LENGTH}
@@ -307,21 +413,27 @@ const App: React.FC = () => {
                 </div>
               </div>
               
-              <div className="flex gap-4">
-                  <div className="w-28">
-                     <label className="block text-lg font-bold text-slate-700 mb-3">{t.roundsLabel}</label>
+              <div className="flex gap-4 md:gap-6">
+                  <div className="w-28 md:w-32">
+                     <label 
+                       className="block text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-4"
+                       style={{ marginTop: '-50px', marginBottom: '10px' }}
+                     >{t.roundsLabel}</label>
                      <input
                         type="number"
                         min={1}
                         max={20}
                         value={numRounds}
                         onChange={(e) => setNumRounds(parseInt(e.target.value) || 0)}
-                        className="w-full bg-white border border-slate-300 rounded-xl p-5 text-center text-xl font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all shadow-inner"
+                        className="w-full bg-white border border-slate-200 rounded-2xl p-5 md:p-7 text-center text-xl md:text-2xl font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all shadow-sm"
                      />
                   </div>
 
-                   <div className="w-36">
-                     <label className="block text-lg font-bold text-slate-700 mb-3">{t.maxLengthLabel}</label>
+                   <div className="w-36 md:w-44">
+                     <label 
+                       className="block text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-4"
+                       style={{ marginTop: '-50px', marginBottom: '10px' }}
+                     >{t.maxLengthLabel}</label>
                      <div className="relative">
                          <input
                             type="number"
@@ -331,9 +443,9 @@ const App: React.FC = () => {
                             value={maxLen}
                             onChange={(e) => setMaxLen(e.target.value)}
                             onBlur={handleMaxLenBlur}
-                            className="w-full bg-white border border-slate-300 rounded-xl p-5 text-center text-xl font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all shadow-inner"
+                            className="w-full bg-white border border-slate-200 rounded-2xl p-5 md:p-7 text-center text-xl md:text-2xl font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all shadow-sm"
                          />
-                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 pointer-events-none font-medium">
+                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs md:text-sm text-slate-400 pointer-events-none font-bold">
                              {t.wordUnit}
                          </span>
                      </div>
@@ -354,21 +466,38 @@ const App: React.FC = () => {
 
         {/* Script Display */}
         {(state.messages.length > 0 || state.isPlaying) && (
-           <div className="flex-1 min-h-[500px] flex flex-col relative">
-              <div className="flex-1 space-y-4 pb-32">
+           <div className="flex-1 min-h-[500px] md:min-h-[600px] flex flex-col relative max-w-5xl mx-auto w-full">
+              <div className="flex-1 space-y-4 md:space-y-6 pb-32 md:pb-40">
                   {state.messages.map((msg) => (
-                    <ChatBubble key={msg.id} message={msg} language={state.language} mode={state.mode} />
+                    <ChatBubble 
+                      key={msg.id} 
+                      message={msg} 
+                      language={state.language} 
+                      mode={state.mode} 
+                      customAvatar={state.customAvatars[msg.role]}
+                      avatarSize={state.avatarSizes[msg.role]}
+                    />
                   ))}
                   
                   {/* Loading / Typing Indicator */}
                   {state.isPlaying && state.currentSpeaker && (
-                     <div className="flex w-full justify-center animate-pulse py-4">
-                        <div className={`px-6 py-3 rounded-full text-base font-bold border-2 shadow-sm ${
+                     <div className="flex w-full justify-center animate-pulse py-4 md:py-8">
+                        <div className={`px-5 md:px-8 py-2.5 md:py-4 rounded-full text-base md:text-xl font-black border-2 md:border-4 shadow-lg md:shadow-xl flex items-center gap-3 md:gap-4 ${
                             state.currentSpeaker === AgentRole.DIRECTOR ? 'border-violet-200 text-violet-700 bg-violet-50' :
                             state.currentSpeaker === AgentRole.ACTOR_A ? 'border-cyan-200 text-cyan-700 bg-cyan-50' :
                             'border-rose-200 text-rose-700 bg-rose-50'
                         }`}>
-                           {AGENT_CONFIG[state.currentSpeaker].avatar} {AGENT_CONFIG[state.currentSpeaker].names(state.mode, state.language)} {t.thinking}
+                            <div 
+                              className="rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-200 shrink-0"
+                              style={{ width: state.avatarSizes[state.currentSpeaker] * (window.innerWidth < 768 ? 0.5 : 0.7), height: state.avatarSizes[state.currentSpeaker] * (window.innerWidth < 768 ? 0.5 : 0.7) }}
+                            >
+                              {state.customAvatars[state.currentSpeaker] ? (
+                                <img src={state.customAvatars[state.currentSpeaker]!} alt="Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                              ) : (
+                                <span style={{ fontSize: state.avatarSizes[state.currentSpeaker] * (window.innerWidth < 768 ? 0.25 : 0.35) }}>{AGENT_CONFIG[state.currentSpeaker].avatar}</span>
+                              )}
+                            </div>
+                            <span className="tracking-wide">{AGENT_CONFIG[state.currentSpeaker].names(state.mode, state.language)} {t.thinking}</span>
                         </div>
                      </div>
                   )}
@@ -376,34 +505,34 @@ const App: React.FC = () => {
               </div>
 
               {/* Floating Action Bar */}
-              <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/95 backdrop-blur-md border border-slate-200 p-3 pl-4 pr-3 rounded-2xl shadow-2xl z-50 ring-1 ring-black/5">
+              <div className="fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 md:gap-4 bg-white/95 backdrop-blur-md border border-slate-200 p-2 md:p-4 pl-3 md:pl-6 pr-2 md:pr-4 rounded-2xl md:rounded-[2rem] shadow-2xl z-50 ring-1 ring-black/5 transform hover:scale-105 transition-transform">
                  
                  {/* Intervene Button */}
                  <button
                    onClick={() => triggerIntervention()}
                    disabled={!state.isPlaying || state.isIntervening}
                    title={t.interveneTooltip}
-                   className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all ${
+                   className={`flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl transition-all ${
                      state.isIntervening 
                       ? "bg-violet-600 text-white animate-pulse shadow-lg" 
                       : "bg-slate-100 hover:bg-violet-50 text-slate-500 hover:text-violet-600 border border-slate-200 hover:border-violet-300"
                    } disabled:opacity-30 disabled:cursor-not-allowed`}
                  >
-                   <span className="text-2xl">📢</span>
+                   <span className="text-xl md:text-3xl">📢</span>
                  </button>
 
-                 <div className="h-10 w-px bg-slate-300 mx-1"></div>
+                 <div className="h-8 md:h-12 w-px bg-slate-300 mx-0.5 md:mx-1"></div>
 
                  {/* Pause / Resume */}
                  <button 
                     onClick={togglePause}
-                    className={`flex items-center gap-3 px-8 h-14 rounded-xl font-bold text-lg transition-all shadow-sm ${
+                    className={`flex items-center gap-2 md:gap-3 px-4 md:px-12 h-12 md:h-16 rounded-xl md:rounded-2xl font-black text-sm md:text-xl transition-all shadow-sm ${
                        state.isPlaying 
                          ? "bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 hover:border-amber-400" 
                          : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 hover:border-emerald-400"
                     }`}
                  >
-                    <span className="text-2xl">{state.isPlaying ? "⏸" : "▶️"}</span>
+                    <span className="text-xl md:text-3xl">{state.isPlaying ? "⏸" : "▶️"}</span>
                     <span>{state.isPlaying ? t.pause : t.resume}</span>
                  </button>
 
@@ -411,9 +540,9 @@ const App: React.FC = () => {
                  {!state.isPlaying && (
                      <button 
                         onClick={resetSimulation}
-                        className="flex items-center gap-3 px-6 h-14 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 rounded-xl transition-colors font-bold text-lg shadow-sm"
+                        className="flex items-center gap-2 md:gap-3 px-4 md:px-8 h-12 md:h-16 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 rounded-xl md:rounded-2xl transition-colors font-bold text-sm md:text-xl shadow-sm"
                     >
-                        <span>🔄</span>
+                        <span className="text-xl md:text-2xl">🔄</span>
                         <span className="hidden sm:inline">{t.newScene}</span>
                     </button>
                  )}

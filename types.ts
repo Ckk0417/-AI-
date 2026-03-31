@@ -34,6 +34,8 @@ export interface SimulationState {
   isIntervening: boolean;
   isMuted: boolean;
   agentVoices: Record<AgentRole, string>;
+  customAvatars: Record<AgentRole, string | null>;
+  avatarSizes: Record<AgentRole, number>;
 }
 
 export type AgentConfig = {
