@@ -36,13 +36,14 @@ export interface SimulationState {
   agentVoices: Record<AgentRole, string>;
   customAvatars: Record<AgentRole, string | null>;
   avatarSizes: Record<AgentRole, number>;
+  totalTokensUsed: number;
 }
 
 export type AgentConfig = {
   [key in AgentRole]: {
     // Names is now a function to allow dynamic naming based on mode (e.g., "Teacher" vs "Debater")
     names: (mode: SimulationMode, lang: Language) => string;
-    systemInstruction: (topic: string, mode: SimulationMode, lang: Language) => string;
+    systemInstruction: (topic: string, mode: SimulationMode, lang: Language, currentRound: number, maxRounds: number) => string;
     color: string;
     avatar: string;
     voiceName: string; // Default voice

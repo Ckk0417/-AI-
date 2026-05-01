@@ -37,10 +37,10 @@ export const ChatBubble: React.FC<ChatBubbleProps> = React.memo(({ message, lang
       {/* Avatar Section */}
       <div className="shrink-0 mt-1">
         <div 
-          className="rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-200"
+          className="rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-200 shrink-0"
           style={{ 
-            width: window.innerWidth < 768 ? Math.min(avatarSize, 48) : avatarSize, 
-            height: window.innerWidth < 768 ? Math.min(avatarSize, 48) : avatarSize 
+            width: window.innerWidth < 768 ? Math.min(avatarSize, 40) : avatarSize, 
+            height: window.innerWidth < 768 ? Math.min(avatarSize, 40) : avatarSize 
           }}
         >
           {customAvatar ? (
@@ -52,7 +52,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = React.memo(({ message, lang
               key={customAvatar}
             />
           ) : (
-            <span style={{ fontSize: (window.innerWidth < 768 ? Math.min(avatarSize, 48) : avatarSize) * 0.5 }} className="filter drop-shadow-sm">{config.avatar}</span>
+            <span style={{ fontSize: (window.innerWidth < 768 ? Math.min(avatarSize, 40) : avatarSize) * 0.5 }} className="filter drop-shadow-sm">{config.avatar}</span>
           )}
         </div>
       </div>
@@ -92,15 +92,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = React.memo(({ message, lang
         </div>
         
         <div
-          className={`relative p-4 md:p-8 lg:p-10 rounded-2xl md:rounded-[2rem] shadow-sm border ${
+          className={`relative p-4 md:p-6 lg:p-8 rounded-2xl md:rounded-[2rem] shadow-sm border ${
             isDirector
-              ? "bg-violet-50 border-violet-200 text-violet-900"
+              ? "bg-violet-50 border-violet-200 text-violet-950"
               : message.role === AgentRole.ACTOR_A
-              ? "bg-cyan-50 border-cyan-200 text-cyan-950 rounded-tl-none"
-              : "bg-rose-50 border-rose-200 text-rose-950 rounded-tr-none"
+              ? "bg-slate-50 border-slate-200 text-slate-800 rounded-tl-none"
+              : "bg-orange-50 border-orange-100 text-orange-950 rounded-tr-none"
           }`}
         >
-          <p className="whitespace-pre-wrap leading-relaxed text-base md:text-xl lg:text-2xl font-medium">
+          <p className="whitespace-pre-wrap leading-relaxed text-sm md:text-lg lg:text-xl font-medium">
             {message.content}
           </p>
         </div>

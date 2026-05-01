@@ -3,6 +3,7 @@ import { useMultiAgentSimulation } from "./hooks/useMultiAgentSimulation";
 import { SimulationMode, AgentRole, Language } from "./types";
 import { ChatBubble } from "./components/ChatBubble";
 import { AGENT_CONFIG, TRANSLATIONS, RANDOM_TOPICS, AVAILABLE_VOICES } from "./constants";
+import { playAudioData } from "./services/ttsService";
 
 const MAX_TOPIC_LENGTH = 100;
 
@@ -130,26 +131,30 @@ const App: React.FC = () => {
   return (
     <div 
       className="min-h-screen flex flex-col items-center bg-slate-50 text-slate-900 font-sans selection:bg-violet-200 selection:text-violet-900"
-      style={{ paddingLeft: '0px' }}
     >
       {/* Header */}
       <header 
-        className="w-full max-w-6xl p-3 md:p-5 border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-10 flex flex-col lg:flex-row justify-between items-center gap-3 shadow-sm"
-        style={{ marginLeft: '0px', paddingLeft: '20px', width: '1500px', height: '120px', fontFamily: 'Times New Roman' }}
+        className="w-full max-w-[1500px] p-3 md:p-5 border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-10 flex flex-col md:flex-row justify-between items-center gap-3 shadow-sm"
+        style={{ fontFamily: 'Times New Roman' }}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-xl md:text-2xl shadow-lg shadow-violet-500/20 text-white">
+        <div className="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-xl md:text-2xl shadow-lg shadow-violet-500/20 text-white shrink-0">
             🤖
           </div>
           <div>
             <h1 className="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">
               {t.appTitle}
             </h1>
-            <p className="text-xs text-slate-500 font-medium">{t.poweredBy}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-xs text-slate-500 font-medium">{t.poweredBy}</p>
+              <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200">React</span>
+              <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200">TypeScript</span>
+              <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md border border-slate-200">Tailwind</span>
+            </div>
           </div>
         </div>
         
-        <div className="flex items-center gap-4 flex-wrap justify-end">
+        <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center md:justify-end w-full md:w-auto">
             {/* Save / Load */}
             <div className="flex gap-2">
                 <button 
@@ -194,12 +199,21 @@ const App: React.FC = () => {
                     {state.isPlaying ? t.sessionActive : (state.messages.length > 0 ? t.pause : t.ready)}
                 </span>
             </div>
+
+            {/* Token Usage */}
+            {state.totalTokensUsed > 0 && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700">
+                <span className="text-sm font-bold">
+                  {t.tokensUsed}: {state.totalTokensUsed.toLocaleString()}
+                </span>
+              </div>
+            )}
         </div>
       </header>
 
       {/* Main Stage */}
       <main 
-        className="flex-1 w-full max-w-6xl p-3 md:p-6 lg:p-10 flex flex-col gap-6 md:gap-8"
+        className="flex-1 w-full max-w-[1500px] p-3 md:p-6 lg:p-10 flex flex-col gap-6 md:gap-8"
         style={{ fontFamily: 'Times New Roman' }}
       >
         
@@ -207,28 +221,27 @@ const App: React.FC = () => {
         {!state.isPlaying && state.messages.length === 0 && (
           <div 
             className="w-full bg-white p-5 md:p-8 lg:p-12 rounded-3xl md:rounded-[2.5rem] border border-slate-200 shadow-xl md:shadow-2xl animate-fade-in space-y-8 md:space-y-12"
-            style={{ marginLeft: '-220px', paddingLeft: '48px', marginRight: '0px', marginBottom: '0px', marginTop: '-40px', width: '1500px', fontFamily: 'Times New Roman' }}
+            style={{ fontFamily: 'Times New Roman' }}
           >
             <h2 
-              className="text-2xl md:text-4xl font-black text-center text-slate-800 tracking-tight"
-              style={{ fontSize: '36px', fontStyle: 'normal', fontWeight: 'bold', fontFamily: 'Times New Roman', marginBottom: '-50px', width: '1062.4px', height: '40px', marginLeft: '170px', paddingRight: '0px', paddingBottom: '0px', marginRight: '0px', marginTop: '-40px' }}
+              className="text-2xl md:text-3xl lg:text-4xl font-black text-center text-slate-800 tracking-tight"
             >{t.setStage}</h2>
             
             {/* Mode Selection */}
             <div>
               <label 
                 className="block text-lg font-bold text-slate-700 mb-4"
-                style={{ borderWidth: '0px', paddingLeft: '0px', height: '28px', marginBottom: '0px', fontFamily: 'Times New Roman' }}
+                style={{ fontFamily: 'Times New Roman' }}
               >{t.selectFormat}</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <button
                   onClick={() => setSelectedMode(SimulationMode.DEBATE)}
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 ${
+                  className={`p-6 h-full rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 ${
                     selectedMode === SimulationMode.DEBATE
                       ? "border-violet-500 bg-violet-50 text-violet-900 shadow-md"
                       : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-400 hover:bg-white"
                   }`}
-                  style={{ height: '150.2px', fontFamily: 'Times New Roman' }}
+                  style={{ fontFamily: 'Times New Roman' }}
                 >
                   <span className="text-4xl">⚖️</span>
                   <span className="text-xl font-bold">{t.debate}</span>
@@ -236,12 +249,12 @@ const App: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setSelectedMode(SimulationMode.THEATER)}
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 ${
+                  className={`p-6 h-full rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 ${
                     selectedMode === SimulationMode.THEATER
                       ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-900 shadow-md"
                       : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-400 hover:bg-white"
                   }`}
-                  style={{ height: '150.2px', paddingLeft: '24px', fontFamily: 'Times New Roman' }}
+                  style={{ fontFamily: 'Times New Roman' }}
                 >
                   <span className="text-4xl">🎭</span>
                   <span className="text-xl font-bold">{t.theater}</span>
@@ -249,12 +262,12 @@ const App: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setSelectedMode(SimulationMode.EDUCATION)}
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 ${
+                  className={`p-6 h-full rounded-2xl border-2 transition-all duration-200 flex flex-col items-center gap-3 ${
                     selectedMode === SimulationMode.EDUCATION
                       ? "border-emerald-500 bg-emerald-50 text-emerald-900 shadow-md"
                       : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-400 hover:bg-white"
                   }`}
-                  style={{ height: '150.2px', fontFamily: 'Times New Roman' }}
+                  style={{ fontFamily: 'Times New Roman' }}
                 >
                   <span className="text-4xl">🎓</span>
                   <span className="text-xl font-bold">{t.education}</span>
@@ -267,7 +280,7 @@ const App: React.FC = () => {
             <div>
                <label 
                  className="block text-lg md:text-xl font-bold text-slate-700 mb-4 md:mb-6"
-                 style={{ marginBottom: '5px', marginTop: '-42px', fontFamily: 'Times New Roman' }}
+                 style={{ fontFamily: 'Times New Roman' }}
                >{t.voiceCast}</label>
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                   {[AgentRole.DIRECTOR, AgentRole.ACTOR_A, AgentRole.ACTOR_B].map(role => {
@@ -298,7 +311,7 @@ const App: React.FC = () => {
                     };
 
                     return (
-                      <div key={role} className="flex flex-col gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100" style={{ fontFamily: 'Times New Roman' }}>
+                      <div key={role} className="flex flex-col gap-3 md:gap-4 p-4 md:p-5 rounded-2xl bg-slate-50 border border-slate-100" style={{ fontFamily: 'Times New Roman' }}>
                         <div className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider ${roleColor}`}>
                            <div 
                              className="rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-200 shrink-0"
@@ -374,21 +387,20 @@ const App: React.FC = () => {
             </div>
 
             {/* Inputs: Topic, Rounds, Length */}
-            <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
-              <div className="flex-grow">
-                <label 
-                  className="block text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-4 flex items-center justify-between"
-                  style={{ width: '1042.4px', height: '34px', marginBottom: '5px', marginLeft: '0px', paddingLeft: '0px', marginRight: '0px', paddingRight: '0px', marginTop: '-50px' }}
-                >
-                    {t.topicLabel}
-                    <button 
-                      onClick={handleRandomTopic}
-                      className="text-violet-600 hover:text-violet-800 text-xs md:text-sm font-bold flex items-center gap-2 transition-colors bg-violet-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl hover:bg-violet-100"
-                    >
-                       <span>🎲</span> {t.randomTopic}
-                    </button>
-                </label>
-                <div className="relative">
+            <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-end">
+              <div className="flex-grow flex flex-col w-full">
+                <div className="flex items-center justify-between mb-3 md:mb-5">
+                  <label className="text-lg md:text-xl font-bold text-slate-700">
+                      {t.topicLabel}
+                  </label>
+                  <button 
+                    onClick={handleRandomTopic}
+                    className="text-violet-600 hover:text-violet-800 text-xs md:text-sm font-bold flex items-center gap-2 transition-colors bg-violet-50 px-3 md:px-4 py-1.5 md:py-2 rounded-xl hover:bg-violet-100"
+                  >
+                     <span>🎲</span> {t.randomTopic}
+                  </button>
+                </div>
+                <div className="relative w-full">
                   <input
                     type="text"
                     maxLength={MAX_TOPIC_LENGTH}
@@ -401,11 +413,10 @@ const App: React.FC = () => {
                         ? t.topicPlaceholderTheater
                         : t.topicPlaceholderEducation
                     }
-                    className="w-full bg-white border border-slate-200 rounded-2xl p-5 md:p-7 pr-20 text-xl md:text-2xl text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all placeholder-slate-300 shadow-sm font-medium"
+                    className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-7 pr-16 md:pr-20 text-lg md:text-2xl text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all placeholder-slate-300 shadow-sm font-medium"
                     onKeyDown={(e) => e.key === 'Enter' && handleStart()}
-                    style={{ marginTop: '0px' }}
                   />
-                  <div className={`absolute right-6 top-1/2 -translate-y-1/2 text-sm md:text-base font-mono font-bold ${
+                  <div className={`absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-xs md:text-base font-mono font-bold ${
                       inputTopic.length >= MAX_TOPIC_LENGTH ? 'text-red-500' : 'text-slate-400'
                   }`}>
                     {inputTopic.length}/{MAX_TOPIC_LENGTH}
@@ -413,27 +424,25 @@ const App: React.FC = () => {
                 </div>
               </div>
               
-              <div className="flex gap-4 md:gap-6">
-                  <div className="w-28 md:w-32">
-                     <label 
-                       className="block text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-4"
-                       style={{ marginTop: '-50px', marginBottom: '10px' }}
-                     >{t.roundsLabel}</label>
+              <div className="flex gap-4 md:gap-6 w-full lg:w-auto">
+                  <div className="flex flex-col w-32 md:w-40">
+                     <label className="text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-5 text-center">
+                         {t.roundsLabel}
+                     </label>
                      <input
                         type="number"
                         min={1}
                         max={20}
                         value={numRounds}
                         onChange={(e) => setNumRounds(parseInt(e.target.value) || 0)}
-                        className="w-full bg-white border border-slate-200 rounded-2xl p-5 md:p-7 text-center text-xl md:text-2xl font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all shadow-sm"
+                        className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-7 text-center text-lg md:text-2xl font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all shadow-sm"
                      />
                   </div>
 
-                   <div className="w-36 md:w-44">
-                     <label 
-                       className="block text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-4"
-                       style={{ marginTop: '-50px', marginBottom: '10px' }}
-                     >{t.maxLengthLabel}</label>
+                   <div className="flex flex-col w-32 md:w-44">
+                     <label className="text-lg md:text-xl font-bold text-slate-700 mb-3 md:mb-5 text-center">
+                         {t.maxLengthLabel}
+                     </label>
                      <div className="relative">
                          <input
                             type="number"
@@ -443,9 +452,9 @@ const App: React.FC = () => {
                             value={maxLen}
                             onChange={(e) => setMaxLen(e.target.value)}
                             onBlur={handleMaxLenBlur}
-                            className="w-full bg-white border border-slate-200 rounded-2xl p-5 md:p-7 text-center text-xl md:text-2xl font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all shadow-sm"
+                            className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-7 text-center text-lg md:text-2xl font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-500/20 transition-all shadow-sm"
                          />
-                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs md:text-sm text-slate-400 pointer-events-none font-bold">
+                         <span className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-xs md:text-sm text-slate-400 pointer-events-none font-bold">
                              {t.wordUnit}
                          </span>
                      </div>
@@ -469,14 +478,26 @@ const App: React.FC = () => {
            <div className="flex-1 min-h-[500px] md:min-h-[600px] flex flex-col relative max-w-5xl mx-auto w-full">
               <div className="flex-1 space-y-4 md:space-y-6 pb-32 md:pb-40">
                   {state.messages.map((msg) => (
-                    <ChatBubble 
-                      key={msg.id} 
-                      message={msg} 
-                      language={state.language} 
-                      mode={state.mode} 
-                      customAvatar={state.customAvatars[msg.role]}
-                      avatarSize={state.avatarSizes[msg.role]}
-                    />
+                    <div key={msg.id} className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <ChatBubble 
+                          message={msg} 
+                          language={state.language} 
+                          mode={state.mode} 
+                          customAvatar={state.customAvatars[msg.role]}
+                          avatarSize={state.avatarSizes[msg.role]}
+                        />
+                      </div>
+                      {msg.audioBase64 && (
+                        <button
+                          onClick={() => playAudioData(msg.audioBase64!)}
+                          className="p-3 bg-violet-100 hover:bg-violet-200 text-violet-700 rounded-full transition-colors shadow-sm shrink-0"
+                          title="Replay Audio"
+                        >
+                          ▶️
+                        </button>
+                      )}
+                    </div>
                   ))}
                   
                   {/* Loading / Typing Indicator */}
@@ -505,14 +526,14 @@ const App: React.FC = () => {
               </div>
 
               {/* Floating Action Bar */}
-              <div className="fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 md:gap-4 bg-white/95 backdrop-blur-md border border-slate-200 p-2 md:p-4 pl-3 md:pl-6 pr-2 md:pr-4 rounded-2xl md:rounded-[2rem] shadow-2xl z-50 ring-1 ring-black/5 transform hover:scale-105 transition-transform">
+              <div className="fixed bottom-4 md:bottom-8 left-4 right-4 md:left-1/2 md:right-auto md:-translate-x-1/2 flex items-center gap-2 md:gap-4 bg-white/95 backdrop-blur-md border border-slate-200 p-2 md:p-4 rounded-2xl md:rounded-[2rem] shadow-2xl z-50 ring-1 ring-black/5 transition-transform max-w-lg mx-auto">
                  
                  {/* Intervene Button */}
                  <button
                    onClick={() => triggerIntervention()}
                    disabled={!state.isPlaying || state.isIntervening}
                    title={t.interveneTooltip}
-                   className={`flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl transition-all ${
+                   className={`flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 shrink-0 rounded-xl md:rounded-2xl transition-all ${
                      state.isIntervening 
                       ? "bg-violet-600 text-white animate-pulse shadow-lg" 
                       : "bg-slate-100 hover:bg-violet-50 text-slate-500 hover:text-violet-600 border border-slate-200 hover:border-violet-300"
@@ -526,7 +547,7 @@ const App: React.FC = () => {
                  {/* Pause / Resume */}
                  <button 
                     onClick={togglePause}
-                    className={`flex items-center gap-2 md:gap-3 px-4 md:px-12 h-12 md:h-16 rounded-xl md:rounded-2xl font-black text-sm md:text-xl transition-all shadow-sm ${
+                    className={`flex-1 md:flex-none flex items-center justify-center gap-2 md:gap-3 px-2 md:px-12 h-12 md:h-16 rounded-xl md:rounded-2xl font-black text-sm md:text-xl transition-all shadow-sm ${
                        state.isPlaying 
                          ? "bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 hover:border-amber-400" 
                          : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 hover:border-emerald-400"
@@ -540,7 +561,7 @@ const App: React.FC = () => {
                  {!state.isPlaying && (
                      <button 
                         onClick={resetSimulation}
-                        className="flex items-center gap-2 md:gap-3 px-4 md:px-8 h-12 md:h-16 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 rounded-xl md:rounded-2xl transition-colors font-bold text-sm md:text-xl shadow-sm"
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 md:gap-3 px-2 md:px-8 h-12 md:h-16 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 rounded-xl md:rounded-2xl transition-colors font-bold text-sm md:text-xl shadow-sm"
                     >
                         <span className="text-xl md:text-2xl">🔄</span>
                         <span className="hidden sm:inline">{t.newScene}</span>

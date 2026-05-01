@@ -18,8 +18,8 @@ export const generateAgentResponse = async (
   mode: SimulationMode,
   language: Language,
   maxLength: number
-): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+): Promise<{ text: string; tokensUsed: number }> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   // Format history for the model context
   // We provide the transcript as context so the agent knows what happened
@@ -28,7 +28,7 @@ export const generateAgentResponse = async (
     .join("\n\n");
 
   const outputLanguageInstruction = language === 'zh-TW' 
-    ? "OUTPUT LANGUAGE: Traditional Chinese (Taiwan usage) / 台灣繁體中文。請使用台灣習慣用語，避免中國大陸用語。" 
+    ? "OUTPUT LANGUAGE: Traditional Chinese (Taiwan usage) / 台灣繁體中文。請使用台灣習慣用語，避免中國大陸用語。請使用淺顯易懂的現代常用詞彙，避免使用文言文、過度艱澀的成語或生僻字，讓一般大眾都能輕鬆理解。" 
     : "OUTPUT LANGUAGE: English";
 
   // Define length constraints based on language to keep dialogue snappy
@@ -50,23 +50,24 @@ export const generateAgentResponse = async (
     
     CRITICAL: Ensure you complete your sentences and thoughts. Do not stop mid-sentence. End with proper punctuation.
     Do not prefix your response with your name, just speak.
+    CRITICAL FOR TTS: DO NOT output any stage directions, actions, sound effects, or descriptions like *sighs*, (laughs), （嘆氣） etc. within your response. Output ONLY the pure spoken words.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-lite-preview",
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,
         temperature: 0.8, // Higher creativity for drama/debate
         maxOutputTokens: 2048, // High limit to prevent cut-offs, prompt controls actual length
-        thinkingConfig: { thinkingBudget: 0 }, // Disable thinking for lower latency
       },
     });
 
-    return getResponseText(response);
+    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    return { text: getResponseText(response), tokensUsed };
   } catch (error) {
     console.error(`Error generating response for ${role}:`, error);
-    return `[System Error: ${role} failed to speak. Please try again.]`;
+    return { text: `[System Error: ${role} failed to speak. Please try again.]`, tokensUsed: 0 };
   }
 };

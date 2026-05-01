@@ -62,11 +62,11 @@ async function decodeAudioData(
 export const fetchTTS = async (text: string, voiceName: string): Promise<string | undefined> => {
   if (!text.trim()) return undefined;
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-tts",
+      model: "gemini-3.1-flash-tts-preview",
       contents: [{ parts: [{ text }] }],
       config: {
         responseModalities: [Modality.AUDIO],
